@@ -11,8 +11,9 @@ public class NokPhone {
 
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Phone numbers should only contain numbers, and it should be at least 3 digits long";
-    public static final String VALIDATION_REGEX = "\\d{3,}";
+            "Phone numbers should only contain numbers, and it should start with 6, 8 or 9 "
+                    + "and be exactly 8 digits long";
+    public static final String VALIDATION_REGEX = "[689]\\d{7}";
     public final String value;
 
     /**
@@ -30,7 +31,7 @@ public class NokPhone {
      * Constructs a {@code NokPhone} with default value "000".
      */
     public NokPhone() {
-        value = "000";
+        value = "87654321";
     }
 
     /**
