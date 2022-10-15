@@ -29,6 +29,8 @@ public class Phone {
 
     /**
      * Constructs a {@code Phone} with default value "87654321".
+     * // Todo: Note that this constructor is a temporary design and will be removed in future iteration.
+     * // ps: the magic literal can be disastrous when debugging and plz refrain from doing this.
      */
     public Phone() {
         value = "87654321";

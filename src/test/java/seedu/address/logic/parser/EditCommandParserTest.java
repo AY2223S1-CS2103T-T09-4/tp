@@ -110,8 +110,7 @@ public class EditCommandParserTest {
     public void parse_invalidValue_failure() {
         assertParseFailure(parser, "1" + INVALID_NAME_DESC, Name.MESSAGE_CONSTRAINTS); // invalid name
         assertParseFailure(parser, "1" + INVALID_PHONE_DESC, Phone.MESSAGE_CONSTRAINTS); // invalid phone
-        assertParseFailure(
-                parser, "1" + INVALID_NOK_PHONE_DESC, Phone.MESSAGE_CONSTRAINTS); // invalid nok phone
+        assertParseFailure(parser, "1" + INVALID_NOK_PHONE_DESC, Phone.MESSAGE_CONSTRAINTS); // invalid nok phone
         assertParseFailure(parser, "1" + INVALID_EMAIL_DESC, Email.MESSAGE_CONSTRAINTS); // invalid email
         assertParseFailure(parser, "1" + INVALID_ADDRESS_DESC, Address.MESSAGE_CONSTRAINTS); // invalid address
         assertParseFailure(parser, "1" + INVALID_CLASS_DATE_TIME_DESC, Class.MESSAGE_CONSTRAINTS); // invalid class
