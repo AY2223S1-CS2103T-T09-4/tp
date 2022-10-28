@@ -45,7 +45,7 @@ public class StatisticsCalculator {
                 moneyOwed = Math.addExact(moneyOwed, person.getMoneyOwed().value);
             }
         } catch (ArithmeticException e) {
-            return "Owed amount too large to calculate.";
+            return "Owed amount too large";
         }
         return "$" + String.valueOf(moneyOwed);
     }
@@ -63,7 +63,7 @@ public class StatisticsCalculator {
                 moneyPaid = Math.addExact(moneyPaid, person.getMoneyPaid().value);
             }
         } catch (ArithmeticException e) {
-            return "Paid amount too large to calculate.";
+            return "Paid amount too large";
         }
         return "$" + String.valueOf(moneyPaid);
     }
