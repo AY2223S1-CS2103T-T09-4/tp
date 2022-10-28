@@ -74,7 +74,7 @@ public class StatisticsCalculatorTest {
         StatisticsCalculatorTest.TeachersPetStub newData = new StatisticsCalculatorTest.TeachersPetStub(newPersons);
         StatisticsCalculator newCalculator = new StatisticsCalculator(newData);
 
-        assertEquals("Owed amount too large to calculate.", newCalculator.getAmountOwed());
+        assertEquals("Owed amount too large", newCalculator.getAmountOwed());
 
     }
 
@@ -87,7 +87,7 @@ public class StatisticsCalculatorTest {
         StatisticsCalculatorTest.TeachersPetStub newData = new StatisticsCalculatorTest.TeachersPetStub(newPersons);
         StatisticsCalculator newCalculator = new StatisticsCalculator(newData);
 
-        assertEquals("Paid amount too large to calculate.", newCalculator.getAmountPaid());
+        assertEquals("Paid amount too large", newCalculator.getAmountPaid());
 
     }
 
