@@ -51,8 +51,6 @@ public class ClassStorage {
             }
 
         }
-        //classes.get(studentToEdit.getAClass().date).remove(studentToEdit);
-        //classes.get(studentToEdit.getAClass().date).add(editedStudent);
 
     }
 
@@ -113,7 +111,7 @@ public class ClassStorage {
                 if (hasConflict(start, end, startOfCurrClass, endOfCurrClass)
                         && indexOfEditedStudent != getIndex(currStudent)) {
                     throw new CommandException(String.format("%s\n"
-                            +"%s currently has a class on %s as well.", EditCommand.MESSAGE_CLASS_CONFLICT,
+                            +"%s currently has a class between %s as well.", EditCommand.MESSAGE_CLASS_CONFLICT,
                             currStudent.getName(), editedStudent.getAClass()));
                 }
             }
@@ -143,7 +141,7 @@ public class ClassStorage {
                 LocalTime endOfCurrClass = currStudent.getAClass().endTime;
                 if (hasConflict(start, end, startOfCurrClass, endOfCurrClass)) {
                     throw new CommandException(String.format("%s\n"
-                                    +"%s currently has a class on %s as well.", EditCommand.MESSAGE_CLASS_CONFLICT,
+                                    +"%s currently has a class between %s as well.", EditCommand.MESSAGE_CLASS_CONFLICT,
                             currStudent.getName(), editedStudent.getAClass()));
                 }
             }
@@ -182,7 +180,7 @@ public class ClassStorage {
             // Removes the pre-existing class from storage to prevent future conflicts
             for (List<Student> students : ClassStorage.classes.values()) {
                 for (int i = 0; i < students.size(); i++) {
-                    if (students.get(i).isSameStudent(studentToEdit)) {
+                    if (students.get(i).equals(studentToEdit)) {
                         students.remove(i);
                         break;
                     }
