@@ -103,7 +103,39 @@ public class ClassStorage {
                 LocalTime endOfCurrClass = currStudent.getAClass().endTime;
                 if (hasConflict(start, end, startOfCurrClass, endOfCurrClass)
                         && indexOfEditedStudent != getIndex(currStudent)) {
-                    throw new CommandException(EditCommand.MESSAGE_CLASS_CONFLICT);
+                    throw new CommandException(String.format("%s\n"
+                            +"%s currently has a class on %s as well.", EditCommand.MESSAGE_CLASS_CONFLICT,
+                            currStudent.getName(), editedStudent.getAClass()));
+                }
+            }
+            listOfStudents.add(editedStudent);
+        }
+    }
+
+    /**
+     * Saves added classes into storage if there is no conflict between the timings of the classes.
+     *
+     * @param editedStudent Student object.
+     * @throws CommandException if there is a conflict between the timings of the classes.
+     */
+    public static void saveClass(Student editedStudent) throws CommandException {
+        LocalDate date = editedStudent.getAClass().date;
+        LocalTime start = editedStudent.getAClass().startTime;
+        LocalTime end = editedStudent.getAClass().endTime;
+        if (!classes.containsKey(date)) {
+            List<Student> newListOfStudents = new ArrayList<>();
+            newListOfStudents.add(editedStudent);
+            classes.put(date, newListOfStudents);
+        } else {
+            // Gets the list of student who have classes with same date
+            List<Student> listOfStudents = classes.get(date);
+            for (Student currStudent : listOfStudents) {
+                LocalTime startOfCurrClass = currStudent.getAClass().startTime;
+                LocalTime endOfCurrClass = currStudent.getAClass().endTime;
+                if (hasConflict(start, end, startOfCurrClass, endOfCurrClass)) {
+                    throw new CommandException(String.format("%s\n"
+                                    +"%s currently has a class on %s as well.", EditCommand.MESSAGE_CLASS_CONFLICT,
+                            currStudent.getName(), editedStudent.getAClass()));
                 }
             }
             listOfStudents.add(editedStudent);

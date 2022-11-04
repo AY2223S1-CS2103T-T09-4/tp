@@ -114,10 +114,8 @@ public class Student {
      *
      * @param displayedClass class that should be displayed on the schedule if present.
      */
-    public void setDisplayClass(Class displayedClass) {
-        if (mark.isMarked()) {
-            this.displayedClass = displayedClass;
-        } else {
+    public void setDisplayClass() {
+        if (!mark.isMarked()) {
             this.displayedClass = aClass;
         }
     }

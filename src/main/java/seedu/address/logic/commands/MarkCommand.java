@@ -71,7 +71,7 @@ public class MarkCommand extends Command {
             throw new CommandException(MESSAGE_MARKED_PREVIOUSLY);
         }
 
-        ClassStorage.saveClass(markedStudent, this.targetIndex.getZeroBased());
+        ClassStorage.saveClass(markedStudent);
         ClassStorage.removeExistingClass(studentToMark);
 
         model.setStudent(studentToMark, markedStudent);

@@ -105,12 +105,12 @@ public class EditCommand extends Command {
             if (editedStudent.hasMultipleClasses()) {
                 throw new CommandException(MESSAGE_MULTIPLE_CLASSES_PER_DAY);
             }
-            editedStudent.setDisplayClass(editedStudent.getAClass());
+            editedStudent.setDisplayClass();
             ClassStorage.saveClass(editedStudent, index.getOneBased());
             ClassStorage.removeExistingClass(studentToEdit);
         } else if (!studentToEdit.hasEmptyClass()) {
             editedStudent.setClass(studentToEdit.getAClass());
-            editedStudent.setDisplayClass(studentToEdit.getDisplayedClass());
+            editedStudent.setDisplayClass();
             if (editedStudent.hasMultipleClasses()) {
                 throw new CommandException(MESSAGE_MULTIPLE_CLASSES_PER_DAY);
             }
