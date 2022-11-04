@@ -72,7 +72,6 @@ public class MarkCommand extends Command {
         }
 
         ClassStorage.saveClass(markedStudent);
-        ClassStorage.removeExistingClass(studentToMark);
 
         model.setStudent(studentToMark, markedStudent);
 
