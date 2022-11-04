@@ -41,10 +41,19 @@ public class ClassStorage {
      * @param editedStudent Student object with the edited fields.
      */
     public static void updateStudent(Student studentToEdit, Student editedStudent) {
-        if (!studentToEdit.hasEmptyClass()) {
-            classes.get(studentToEdit.getAClass().date).remove(studentToEdit);
-            classes.get(studentToEdit.getAClass().date).add(editedStudent);
+        for (List<Student> students : ClassStorage.classes.values()) {
+            for (int i = 0; i < students.size(); i++) {
+                if (students.get(i).isSameStudent(studentToEdit)) {
+                    students.remove(i);
+                    students.add(editedStudent);
+                    break;
+                }
+            }
+
         }
+        //classes.get(studentToEdit.getAClass().date).remove(studentToEdit);
+        //classes.get(studentToEdit.getAClass().date).add(editedStudent);
+
     }
 
     /**
@@ -170,9 +179,15 @@ public class ClassStorage {
      */
     public static void removeExistingClass(Student studentToEdit) {
         if (!studentToEdit.hasEmptyClass()) {
-            LocalDate date = studentToEdit.getAClass().date;
             // Removes the pre-existing class from storage to prevent future conflicts
-            ClassStorage.classes.get(date).remove(studentToEdit);
+            for (List<Student> students : ClassStorage.classes.values()) {
+                for (int i = 0; i < students.size(); i++) {
+                    if (students.get(i).isSameStudent(studentToEdit)) {
+                        students.remove(i);
+                        break;
+                    }
+                }
+            }
         }
     }
 
