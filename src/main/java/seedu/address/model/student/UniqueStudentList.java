@@ -3,7 +3,6 @@ package seedu.address.model.student;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -143,6 +142,11 @@ public class UniqueStudentList implements Iterable<Student> {
         return internalList.iterator();
     }
 
+    /**
+     * Finds the next available time slot given a valid {@code TimeRange timeRange}.
+     * @param timeRange the stipulated time range that an available time slot should be found from
+     * @return a valid class that fulfills the requirement by the time range
+     */
     public Class findAvailableClassSlot(TimeRange timeRange) {
         LocalDate currDate = LocalDate.now();
         LocalTime currTime = LocalTime.now();
@@ -203,7 +207,7 @@ public class UniqueStudentList implements Iterable<Student> {
         }
 
         // check time after last student
-        newClass = findSlotAfterClass(tr, students.get(students.size()-1));
+        newClass = findSlotAfterClass(tr, students.get(students.size() - 1));
         return newClass;
     }
 
@@ -213,11 +217,9 @@ public class UniqueStudentList implements Iterable<Student> {
         assert tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0;
 
         if (currDate.compareTo(classToCompare.date) == 0) {
-            /**
-             * if the currDate is same as next class date:
-             *   find the bigger time between currTime and tr.startTimeRange
-             *   and check whether there can be a slot from then.
-             */
+            //  if the currDate is same as next class date:
+            //      find the bigger time between currTime and tr.startTimeRange
+            //      and check whether there can be a slot from then.
             LocalTime earliestStartTime;
             if (currTime.compareTo(tr.startTimeRange) < 0) {
                 earliestStartTime = tr.startTimeRange;
