@@ -224,7 +224,8 @@ public class UniqueStudentList implements Iterable<Student> {
             } else {
                 earliestStartTime = currTime;
             }
-            if (earliestStartTime.plusMinutes(tr.duration).compareTo(classToCompare.startTime) <= 0) {
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(classToCompare.startTime) <= 0
+                && earliestStartTime.plusMinutes(tr.duration).compareTo(earliestStartTime) > 0) {
                 return new Class(currDate, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
             } else {
                 return null;
@@ -237,7 +238,8 @@ public class UniqueStudentList implements Iterable<Student> {
         if (currTime.compareTo(tr.startTimeRange) < 0) {
             return new Class(currDate, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
         } else if (currTime.compareTo(tr.endTimeRange) < 0) {
-            if (currTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0) {
+            if (currTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0
+                && currTime.plusMinutes(tr.duration).compareTo(currTime) > 0) {
                 return new Class(currDate, currTime, currTime.plusMinutes(tr.duration));
             }
         }
@@ -251,7 +253,8 @@ public class UniqueStudentList implements Iterable<Student> {
         } else {
             // by assertion: currDate.plusDays(1).compareTo(classToCompare.date) <= 0
             // currDate.plusDays(1).compareTo(classToCompare.date) == 0 in this part
-            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(classToCompare.startTime) <= 0) {
+            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(classToCompare.startTime) <= 0
+                && tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.startTimeRange) > 0) {
                 return new Class(currDate.plusDays(1),
                         tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
             } else {
@@ -275,12 +278,14 @@ public class UniqueStudentList implements Iterable<Student> {
 
         if (c1.date.compareTo(c2.date) == 0) {
             // if c1 and c2 on same day, simply check gap between
-            if (earliestStartTime.plusMinutes(tr.duration).compareTo(c2.startTime) <= 0) {
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(c2.startTime) <= 0
+                && earliestStartTime.plusMinutes(tr.duration).compareTo(earliestStartTime) > 0) {
                 return new Class(c1.date, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
             }
         } else {
             // check slot after c1
-            if (earliestStartTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0) {
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0
+                && earliestStartTime.plusMinutes(tr.duration).compareTo(earliestStartTime) > 0) {
                 return new Class(c1.date, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
             }
             // check whether there is gap in days between c1 and c2
@@ -289,7 +294,8 @@ public class UniqueStudentList implements Iterable<Student> {
                         c1.date.plusDays(1), tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
             }
             // check slot before c2
-            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(c2.startTime) <= 0) {
+            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(c2.startTime) <= 0
+                && tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.startTimeRange) > 0) {
                 return new Class(c2.date, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
             }
         }
@@ -298,9 +304,11 @@ public class UniqueStudentList implements Iterable<Student> {
 
     protected static Class findSlotAfterClass(TimeRange tr, Student student) {
         Class classToCompare = student.getAClass();
-        if (classToCompare.endTime.compareTo(tr.startTimeRange) < 0) {
+        if (classToCompare.endTime.compareTo(tr.startTimeRange) < 0
+            && tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.startTimeRange) > 0) {
             return new Class(classToCompare.date, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
-        } else if (classToCompare.endTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0) {
+        } else if (classToCompare.endTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0
+            && classToCompare.endTime.plusMinutes(tr.duration).compareTo(classToCompare.endTime) > 0) {
             return new Class(
                     classToCompare.date, classToCompare.endTime, classToCompare.endTime.plusMinutes(tr.duration));
         } else {
