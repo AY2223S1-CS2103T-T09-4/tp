@@ -55,23 +55,7 @@ public class Class {
     }
 
     /**
-     * Constructs a {@code Class}.
-     *
-     * @param date LocalDate object.
-     * @param startTime LocalTime object.
-     * @param endTime LocalTime object.
-     * @param classDateTime String object which is a string representation of the date time.
-     */
-    public Class(LocalDate date, LocalTime startTime, LocalTime endTime, String classDateTime) {
-        requireAllNonNull(date, startTime, endTime, classDateTime);
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.classDateTime = classDateTime;
-    }
-
-    /**
-     * Overloaded constructor that generates the date in a String format to construct a {@code Class}
+     * Construct a {@code Class} with generated String representation.
      *
      * @param date LocalDate object.
      * @param startTime LocalTime object.

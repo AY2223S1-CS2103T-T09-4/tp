@@ -225,7 +225,7 @@ public class ParserUtilTest {
     @Test
     public void parseClassDateTime_validDateTime_returnsClass() throws Exception {
         Class expectedClass = new Class(LocalDate.of(2022, 5, 10),
-                LocalTime.of(15, 0), LocalTime.of(16, 0), VALID_CLASS_DATE_TIME);
+                LocalTime.of(15, 0), LocalTime.of(16, 0));
         assertEquals(expectedClass, ParserUtil.parseClass(VALID_CLASS_DATE_TIME));
     }
 

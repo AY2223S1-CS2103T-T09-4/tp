@@ -170,7 +170,7 @@ public class UniqueStudentList implements Iterable<Student> {
         }
     }
 
-    private static Class findSlotWithSingleRecord(
+    protected static Class findSlotWithSingleRecord(
             TimeRange tr, LocalDate currDate, LocalTime currTime, Student student) {
         Class newClass;
         Class classToCompare = student.getAClass();
@@ -187,7 +187,7 @@ public class UniqueStudentList implements Iterable<Student> {
         return newClass;
     }
 
-    private static Class findSlotWithMultipleRecord(
+    protected static Class findSlotWithMultipleRecord(
             TimeRange tr, LocalDate currDate, LocalTime currTime, List<Student> students) {
         Class newClass;
         // check time before first student
@@ -211,7 +211,7 @@ public class UniqueStudentList implements Iterable<Student> {
         return newClass;
     }
 
-    private static Class findSlotBeforeClass(TimeRange tr, LocalDate currDate, LocalTime currTime, Student student) {
+    protected static Class findSlotBeforeClass(TimeRange tr, LocalDate currDate, LocalTime currTime, Student student) {
         Class classToCompare = student.getAClass();
         assert currDate.compareTo(classToCompare.date) <= 0;
         assert tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0;
@@ -262,7 +262,7 @@ public class UniqueStudentList implements Iterable<Student> {
         }
     }
 
-    private static Class findSlotBetweenClasses(TimeRange tr, Student student1, Student student2) {
+    protected static Class findSlotBetweenClasses(TimeRange tr, Student student1, Student student2) {
         Class c1 = student1.getAClass();
         Class c2 = student2.getAClass();
         assert c1.date.compareTo(c2.date) <= 0;
@@ -297,7 +297,8 @@ public class UniqueStudentList implements Iterable<Student> {
         }
         return null;
     }
-    private static Class findSlotAfterClass(TimeRange tr, Student student) {
+
+    protected static Class findSlotAfterClass(TimeRange tr, Student student) {
         Class classToCompare = student.getAClass();
         if (classToCompare.endTime.compareTo(tr.startTimeRange) < 0) {
             return new Class(classToCompare.date, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));

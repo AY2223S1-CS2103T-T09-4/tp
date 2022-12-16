@@ -14,7 +14,7 @@ public class ClassTest {
 
     @Test
     public void constructor_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> new Class(null, null, null, null));
+        assertThrows(NullPointerException.class, () -> new Class(null, null, null));
     }
     @Test
     public void isValidClassString() {
@@ -76,7 +76,7 @@ public class ClassTest {
         LocalTime validStartTime = LocalTime.of(0, 0);
         LocalTime validEndTime = LocalTime.of(23, 59);
         String validClassDateTimeString = "2022-10-11 0000-2359";
-        Class validClass = new Class(validDate, validStartTime, validEndTime, validClassDateTimeString);
+        Class validClass = new Class(validDate, validStartTime, validEndTime);
         assertTrue(validClass.toAvailCommandString().equals(validClassDateTimeString));
     }
 
@@ -86,7 +86,7 @@ public class ClassTest {
         LocalTime validStartTime = LocalTime.of(0, 0);
         LocalTime validEndTime = LocalTime.of(23, 59);
         String validClassDateTimeString = "2022-10-11 0000-2359";
-        Class validClass = new Class(validDate, validStartTime, validEndTime, validClassDateTimeString);
+        Class validClass = new Class(validDate, validStartTime, validEndTime);
         String expectedValidToStringResult = "11 Oct 2022 12AM-11.59PM";
         assertTrue(validClass.toString().equals(expectedValidToStringResult));
 
@@ -100,7 +100,7 @@ public class ClassTest {
         LocalTime validStartTime = LocalTime.of(0, 0);
         LocalTime validEndTime = LocalTime.of(23, 59);
         String validClassDateTimeString = "2022-10-11 0000-2359";
-        Class validClass = new Class(validDate, validStartTime, validEndTime, validClassDateTimeString);
+        Class validClass = new Class(validDate, validStartTime, validEndTime);
         String expectedTimeString = "12AM-11.59PM";
         assertTrue(validClass.toTimeString().equals(expectedTimeString));
 
@@ -111,7 +111,7 @@ public class ClassTest {
         LocalTime validStartTime2 = LocalTime.of(0, 5);
         LocalTime validEndTime2 = LocalTime.of(23, 2);
         String validClassDateTimeString2 = "2022-10-11 0005-2302";
-        Class validClass2 = new Class(validDate2, validStartTime2, validEndTime2, validClassDateTimeString2);
+        Class validClass2 = new Class(validDate2, validStartTime2, validEndTime2);
         String expectedTimeString2 = "12.05AM-11.02PM";
         assertTrue(validClass2.toTimeString().equals(expectedTimeString2));
 
@@ -119,7 +119,7 @@ public class ClassTest {
         LocalTime validStartTime3 = LocalTime.of(2, 20);
         LocalTime validEndTime3 = LocalTime.of(23, 15);
         String validClassDateTimeString3 = "2022-10-11 0220-2315";
-        Class validClass3 = new Class(validDate3, validStartTime3, validEndTime3, validClassDateTimeString3);
+        Class validClass3 = new Class(validDate3, validStartTime3, validEndTime3);
         String expectedTimeString3 = "2.20AM-11.15PM";
         assertTrue(validClass3.toTimeString().equals(expectedTimeString3));
     }
@@ -139,12 +139,12 @@ public class ClassTest {
         LocalDate date = LocalDate.of(2022, 11, 11);
         Class classWithTheSameDate =
                 new Class(LocalDate.of(2022, 11, 11),
-                        LocalTime.of(12, 0), LocalTime.of(15, 0), "2022-11-11 1200-1500");
+                        LocalTime.of(12, 0), LocalTime.of(15, 0));
         assertTrue(classWithTheSameDate.isSameDateAs(date));
 
         LocalDate differentDate = LocalDate.of(2022, 12, 12);
         Class classWithDifferentDate = new Class(differentDate,
-                LocalTime.of(12, 0), LocalTime.of(15, 0), "2022-12-12 1200-1500");
+                LocalTime.of(12, 0), LocalTime.of(15, 0));
         assertFalse(classWithDifferentDate.isSameDateAs(date));
     }
 

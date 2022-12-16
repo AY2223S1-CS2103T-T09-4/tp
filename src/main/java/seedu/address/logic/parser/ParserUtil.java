@@ -191,7 +191,7 @@ public class ParserUtil {
             if (!Class.isValidDuration(startTime, endTime)) {
                 throw new ParseException(Class.INVALID_DURATION_ERROR_MESSAGE);
             }
-            return new Class(date, startTime, endTime, classDatetime);
+            return new Class(date, startTime, endTime);
         } else if (Class.isValidFlexibleClassString(trimmedClassDatetime)) {
             // the format has been validated in isValidFlexibleClassString method
             // ie Mon 0000-2359
@@ -205,8 +205,7 @@ public class ParserUtil {
             // as it depends on actual day's datetime data and cannot be statically tested.
             targetDayOfWeek = Arrays.asList(DAYS_OF_WEEK).indexOf(dateStr.toUpperCase());
             LocalDate targetDate = getTargetClassDate(LocalDateTime.now(), startTime);
-            return new Class(targetDate, startTime, endTime,
-                    targetDate.toString() + trimmedClassDatetime.substring(3));
+            return new Class(targetDate, startTime, endTime);
         } else if (Class.isValidClassStringFormat(trimmedClassDatetime)) {
             // Class is of value that cannot be parsed
             throw new ParseException(Class.INVALID_DATETIME_ERROR_MESSAGE);
