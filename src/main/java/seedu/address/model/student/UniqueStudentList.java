@@ -144,14 +144,9 @@ public class UniqueStudentList implements Iterable<Student> {
     }
 
     public Class findAvailableClassSlot(TimeRange timeRange) {
-        /**
-         * The issue is divided into three parts:
-         * 1. check slot before first class in the upcoming row;
-         * 2. check slot between two neighbouring class sorted by time;
-         * 3. check slot after the last class in the upcoming row.
-         */
         LocalDate currDate = LocalDate.now();
         LocalTime currTime = LocalTime.now();
+        // find all students with class from today current time onwards
         List<Student> list = internalList
                 .stream()
                 .filter(student -> student.getAClass().startTime != null
@@ -229,7 +224,7 @@ public class UniqueStudentList implements Iterable<Student> {
             } else {
                 earliestStartTime = currTime;
             }
-            if (earliestStartTime.plusMinutes(tr.duration).compareTo(classToCompare.startTime) < 0) {
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(classToCompare.startTime) <= 0) {
                 return new Class(currDate, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
             } else {
                 return null;
@@ -254,7 +249,9 @@ public class UniqueStudentList implements Iterable<Student> {
             return new Class(currDate.plusDays(1),
                     tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
         } else {
-            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(classToCompare.startTime) < 0) {
+            // by assertion: currDate.plusDays(1).compareTo(classToCompare.date) <= 0
+            // currDate.plusDays(1).compareTo(classToCompare.date) == 0 in this part
+            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(classToCompare.startTime) <= 0) {
                 return new Class(currDate.plusDays(1),
                         tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
             } else {
@@ -264,6 +261,38 @@ public class UniqueStudentList implements Iterable<Student> {
     }
 
     private static Class findSlotBetweenClasses(TimeRange tr, Student student1, Student student2) {
+        Class c1 = student1.getAClass();
+        Class c2 = student2.getAClass();
+        assert c1.date.compareTo(c2.date) <= 0;
+
+        // used for same-day-check and after-c1-slot-check
+        LocalTime earliestStartTime;
+        if (c1.endTime.compareTo(tr.startTimeRange) < 0) {
+            earliestStartTime = tr.startTimeRange;
+        } else {
+            earliestStartTime = c1.endTime;
+        }
+
+        if (c1.date.compareTo(c2.date) == 0) {
+            // if c1 and c2 on same day, simply check gap between
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(c2.startTime) <= 0) {
+                return new Class(c1.date, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
+            }
+        } else {
+            // check slot after c1
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0) {
+                return new Class(c1.date, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
+            }
+            // check whether there is gap in days between c1 and c2
+            if (c1.date.plusDays(1).compareTo(c2.date) < 0) {
+                return new Class(
+                        c1.date.plusDays(1), tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+            }
+            // check slot before c2
+            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(c2.startTime) <= 0) {
+                return new Class(c2.date, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+            }
+        }
         return null;
     }
     private static Class findSlotAfterClass(TimeRange tr, Student student) {
@@ -271,7 +300,8 @@ public class UniqueStudentList implements Iterable<Student> {
         if (classToCompare.endTime.compareTo(tr.startTimeRange) < 0) {
             return new Class(classToCompare.date, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
         } else if (classToCompare.endTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0) {
-            return new Class(classToCompare.date, classToCompare.endTime, classToCompare.endTime.plusMinutes(tr.duration));
+            return new Class(
+                    classToCompare.date, classToCompare.endTime, classToCompare.endTime.plusMinutes(tr.duration));
         } else {
             return new Class(classToCompare.date.plusDays(1),
                     tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
