@@ -35,4 +35,11 @@ public class AvailCommand extends Command {
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, classToDisplay.toAvailCommandString()));
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other == this
+                || (other instanceof AvailCommand
+                && timeRange.equals(((AvailCommand) other).timeRange));
+    }
 }
