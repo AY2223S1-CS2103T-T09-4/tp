@@ -33,6 +33,7 @@ import seedu.address.model.student.Money;
 import seedu.address.model.student.Name;
 import seedu.address.model.student.Phone;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.timerange.TimeRange;
 
 /**
  * Contains utility methods used for parsing strings in the various *Parser classes.
@@ -289,6 +290,24 @@ public class ParserUtil {
             throw new ParseException(Class.INVALID_TIME_ERROR_MESSAGE);
         }
         return result;
+    }
+
+    public static TimeRange parseTimeRange(String timeRangeString) throws ParseException {
+        requireNonNull(timeRangeString);
+        String trimmedTimeRange = timeRangeString.trim();
+
+        if (TimeRange.isValidTimeRangeFormat(trimmedTimeRange)) {
+            LocalTime startTime = parseTime(trimmedTimeRange.substring(0, 4));
+            LocalTime endTime = parseTime(trimmedTimeRange.substring(5, 9));
+            Integer duration = Integer.valueOf(trimmedTimeRange.substring(10));
+            if (!Class.isValidDuration(startTime, endTime)
+                    || !TimeRange.isValidEndTime(startTime, endTime, duration)) {
+                throw new ParseException(TimeRange.INVALID_DURATION_ERROR_MESSAGE);
+            }
+            return new TimeRange(startTime, endTime, duration);
+        } else {
+            throw new ParseException(TimeRange.MESSAGE_CONSTRAINTS);
+        }
     }
 
     /**

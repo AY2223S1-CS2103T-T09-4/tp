@@ -289,7 +289,8 @@ public class Class {
     }
 
     /**
-     * Returns true if {@code LocalTime startTime} and {@code LocalTime endTime} are valid.
+     * Returns true if {@code LocalTime startTime} and {@code LocalTime endTime} are valid
+     * and {@code LocalTime endTime} is after {code LocalTime startTime}.
      *
      * @param startTime LocalTime object.
      * @param endTime LocalTime object.
