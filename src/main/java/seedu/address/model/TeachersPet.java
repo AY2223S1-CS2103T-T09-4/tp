@@ -2,6 +2,8 @@ package seedu.address.model;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -116,7 +118,7 @@ public class TeachersPet implements ReadOnlyTeachersPet {
      * @return the first available class.
      */
     public Class findAvailableClassSlot(TimeRange timeRange) {
-        return students.findAvailableClassSlot(timeRange);
+        return students.findAvailableClassSlot(timeRange, LocalDate.now(), LocalTime.now());
     }
 
     //// util methods

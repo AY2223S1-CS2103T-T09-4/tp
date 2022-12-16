@@ -147,9 +147,7 @@ public class UniqueStudentList implements Iterable<Student> {
      * @param timeRange the stipulated time range that an available time slot should be found from
      * @return a valid class that fulfills the requirement by the time range
      */
-    public Class findAvailableClassSlot(TimeRange timeRange) {
-        LocalDate currDate = LocalDate.now();
-        LocalTime currTime = LocalTime.now();
+    public Class findAvailableClassSlot(TimeRange timeRange, LocalDate currDate, LocalTime currTime) {
         // find all students with class from today current time onwards
         List<Student> list = internalList
                 .stream()
@@ -157,7 +155,7 @@ public class UniqueStudentList implements Iterable<Student> {
                         && student.getAClass().endTime != null
                         && student.getAClass().date != null
                         && student.getAClass().date.compareTo(currDate) >= 0
-                        && student.getAClass().startTime.compareTo(LocalTime.now()) >= 0)
+                        && student.getAClass().startTime.compareTo(currTime) >= 0)
                 .sorted(Student::compareToByClassStartTimeAsc)
                 .collect(Collectors.toList());
         if (list.size() == 0) {

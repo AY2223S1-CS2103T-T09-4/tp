@@ -177,10 +177,56 @@ public class UniqueStudentListTest {
     /**
      * Creates a student with specified name and class time.
      */
-    private static Student studentQuickBuilder(Name name, Class aClass) {
-        return new Student(name, ALICE.getPhone(), ALICE.getNokPhone(), ALICE.getEmail(), ALICE.getAddress(), aClass,
+    private static Student studentQuickBuilder(Name name, Phone phone, Class aClass) {
+        if (phone == null) {
+            phone = new Phone("61234567");
+        }
+        return new Student(name, phone, ALICE.getNokPhone(), ALICE.getEmail(), ALICE.getAddress(), aClass,
                 ALICE.getMoneyOwed(), ALICE.getMoneyPaid(), ALICE.getRatesPerClass(), ALICE.getAdditionalNotes(),
                 ALICE.getTags(), ALICE.getMarkStatus());
+    }
+
+    @Test
+    public void findAvailableClassSlotTest() {
+        LocalDate date1 = LocalDate.of(2022, 12, 16);
+        LocalDate date2 = LocalDate.of(2022, 12, 17);
+        LocalDate date3 = LocalDate.of(2022, 12, 18);
+        LocalTime time1 = LocalTime.of(10, 0, 0);
+        LocalTime time2 = LocalTime.of(11, 0, 0);
+        LocalTime time3 = LocalTime.of(12, 0, 0);
+        LocalTime time4 = LocalTime.of(13, 0, 0);
+        LocalTime time5 = LocalTime.of(14, 0, 0);
+        LocalTime time6 = LocalTime.of(15, 0, 0);
+        int duration1 = 60;
+        int duration2 = 120;
+        int duration3 = 300;
+        Student s1 = studentQuickBuilder(new Name("s1"), new Phone("61234567"), new Class(date1, time2, time3));
+        Student s2 = studentQuickBuilder(new Name("s2"), new Phone("61234568"), new Class(date2, time3, time6));
+
+        assertEquals(
+                new Class(date1, time1, time2),
+                uniqueStudentList.findAvailableClassSlot(new TimeRange(time1, time6, duration1), date1, time3));
+        uniqueStudentList.add(s1);
+        assertEquals(
+                new Class(date1, time3, time5),
+                uniqueStudentList.findAvailableClassSlot(new TimeRange(time1, time6, duration2), date1, time2));
+        uniqueStudentList.remove(s1);
+        uniqueStudentList.add(s2);
+        assertEquals(
+                new Class(date1, time2, time4),
+                uniqueStudentList.findAvailableClassSlot(new TimeRange(time1, time6, duration2), date1, time2));
+        uniqueStudentList.add(s1);
+        assertEquals(
+                new Class(date1, time3, time5),
+                uniqueStudentList.findAvailableClassSlot(new TimeRange(time1, time6, duration2), date1, time2));
+        assertEquals(
+                new Class(date1, time1, time2),
+                uniqueStudentList.findAvailableClassSlot(new TimeRange(time1, time6, duration1), date1, time1));
+        assertEquals(
+                new Class(date3, time1, time6),
+                uniqueStudentList.findAvailableClassSlot(new TimeRange(time1, time6, duration3), date1, time1));
+
+
     }
     @Test
     public void findSlotBeforeClassTest() {
@@ -196,10 +242,10 @@ public class UniqueStudentListTest {
         int duration1 = 60;
         int duration2 = 120;
         int duration3 = 180;
-        Student s1 = studentQuickBuilder(new Name("s1"), new Class(date1, time1, time2));
-        Student s2 = studentQuickBuilder(new Name("s2"), new Class(date1, time2, time5));
-        Student s3 = studentQuickBuilder(new Name("s3"), new Class(date2, time3, time6));
-        Student s4 = studentQuickBuilder(new Name("s4"), new Class(date3, time4, time6));
+        Student s1 = studentQuickBuilder(new Name("s1"), null, new Class(date1, time1, time2));
+        Student s2 = studentQuickBuilder(new Name("s2"), null, new Class(date1, time2, time5));
+        Student s3 = studentQuickBuilder(new Name("s3"), null, new Class(date2, time3, time6));
+        Student s4 = studentQuickBuilder(new Name("s4"), null, new Class(date3, time4, time6));
         assertEquals(
                 new Class(date1, time1, time2),
                 findSlotBeforeClass(new TimeRange(time1, time6, duration1), date1, time1, s2));
@@ -246,12 +292,12 @@ public class UniqueStudentListTest {
         int duration1 = 60;
         int duration2 = 120;
         int duration3 = 180;
-        Student s1 = studentQuickBuilder(new Name("s1"), new Class(date1, time1, time2));
-        Student s2 = studentQuickBuilder(new Name("s2"), new Class(date1, time4, time5));
-        Student s3 = studentQuickBuilder(new Name("s3"), new Class(date2, time3, time6));
-        Student s4 = studentQuickBuilder(new Name("s4"), new Class(date2, time3, time6));
-        Student s5 = studentQuickBuilder(new Name("s5"), new Class(date1, time2, time3));
-        Student s6 = studentQuickBuilder(new Name("s6"), new Class(date3, time2, time3));
+        Student s1 = studentQuickBuilder(new Name("s1"), null, new Class(date1, time1, time2));
+        Student s2 = studentQuickBuilder(new Name("s2"), null, new Class(date1, time4, time5));
+        Student s3 = studentQuickBuilder(new Name("s3"), null, new Class(date2, time3, time6));
+        Student s4 = studentQuickBuilder(new Name("s4"), null, new Class(date2, time3, time6));
+        Student s5 = studentQuickBuilder(new Name("s5"), null, new Class(date1, time2, time3));
+        Student s6 = studentQuickBuilder(new Name("s6"), null, new Class(date3, time2, time3));
         assertEquals(
                 null,
                 findSlotBetweenClasses(new TimeRange(time1, time6, duration1), s1, s5));
@@ -285,9 +331,9 @@ public class UniqueStudentListTest {
         int duration1 = 60;
         int duration2 = 120;
         int duration3 = 180;
-        Student s1 = studentQuickBuilder(new Name("s1"), new Class(date1, time1, time2));
-        Student s2 = studentQuickBuilder(new Name("s2"), new Class(date1, time4, time5));
-        Student s3 = studentQuickBuilder(new Name("s3"), new Class(date2, time3, time6));
+        Student s1 = studentQuickBuilder(new Name("s1"), null, new Class(date1, time1, time2));
+        Student s2 = studentQuickBuilder(new Name("s2"), null, new Class(date1, time4, time5));
+        Student s3 = studentQuickBuilder(new Name("s3"), null, new Class(date2, time3, time6));
         assertEquals(
                 new Class(date1, time5, time6),
                 findSlotAfterClass(new TimeRange(time1, time6, duration1), s2));
