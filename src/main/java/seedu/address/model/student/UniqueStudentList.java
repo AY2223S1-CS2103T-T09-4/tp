@@ -3,15 +3,19 @@ package seedu.address.model.student;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seedu.address.model.student.exceptions.DuplicateStudentException;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
+import seedu.address.model.timerange.TimeRange;
 
 /**
  * A list of students that enforces uniqueness between its elements and does not allow nulls.
@@ -136,6 +140,181 @@ public class UniqueStudentList implements Iterable<Student> {
     @Override
     public Iterator<Student> iterator() {
         return internalList.iterator();
+    }
+
+    /**
+     * Finds the next available time slot given a valid {@code TimeRange timeRange}.
+     * @param timeRange the stipulated time range that an available time slot should be found from
+     * @return a valid class that fulfills the requirement by the time range
+     */
+    public Class findAvailableClassSlot(TimeRange timeRange, LocalDate currDate, LocalTime currTime) {
+        // find all students with class from today current time onwards
+        List<Student> list = internalList
+                .stream()
+                .filter(student -> student.getAClass().startTime != null
+                        && student.getAClass().endTime != null
+                        && student.getAClass().date != null
+                        && student.getAClass().date.compareTo(currDate) >= 0
+                        && student.getAClass().startTime.compareTo(currTime) >= 0)
+                .sorted(Student::compareToByClassStartTimeAsc)
+                .collect(Collectors.toList());
+        if (list.size() == 0) {
+            return new Class(
+                    currDate, timeRange.startTimeRange, timeRange.startTimeRange.plusMinutes(timeRange.duration));
+        } else if (list.size() == 1) {
+            return findSlotWithSingleRecord(timeRange, currDate, currTime, list.get(0));
+        } else {
+            return findSlotWithMultipleRecord(timeRange, currDate, currTime, list);
+        }
+    }
+
+    protected static Class findSlotWithSingleRecord(
+            TimeRange tr, LocalDate currDate, LocalTime currTime, Student student) {
+        Class newClass;
+        Class classToCompare = student.getAClass();
+        // When the startTimeRange is before the earliest slot
+        assert classToCompare.endTime != null;
+        assert classToCompare.startTime != null;
+
+        newClass = findSlotBeforeClass(tr, currDate, currTime, student);
+        if (newClass != null) {
+            return newClass;
+        }
+        newClass = findSlotAfterClass(tr, student);
+        assert newClass != null;
+        return newClass;
+    }
+
+    protected static Class findSlotWithMultipleRecord(
+            TimeRange tr, LocalDate currDate, LocalTime currTime, List<Student> students) {
+        Class newClass;
+        // check time before first student
+        newClass = findSlotBeforeClass(tr, currDate, currTime, students.get(0));
+        if (newClass != null) {
+            return newClass;
+        }
+
+        // check time between each pair of neighbouring students
+        for (int i = 0; i < students.size() - 1; i++) {
+            Student s1 = students.get(i);
+            Student s2 = students.get(i + 1);
+            newClass = findSlotBetweenClasses(tr, s1, s2);
+            if (newClass != null) {
+                return newClass;
+            }
+        }
+
+        // check time after last student
+        newClass = findSlotAfterClass(tr, students.get(students.size() - 1));
+        return newClass;
+    }
+
+    protected static Class findSlotBeforeClass(TimeRange tr, LocalDate currDate, LocalTime currTime, Student student) {
+        Class classToCompare = student.getAClass();
+        assert currDate.compareTo(classToCompare.date) <= 0;
+        assert tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0;
+
+        if (currDate.compareTo(classToCompare.date) == 0) {
+            //  if the currDate is same as next class date:
+            //      find the bigger time between currTime and tr.startTimeRange
+            //      and check whether there can be a slot from then.
+            LocalTime earliestStartTime;
+            if (currTime.compareTo(tr.startTimeRange) < 0) {
+                earliestStartTime = tr.startTimeRange;
+            } else {
+                earliestStartTime = currTime;
+            }
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(classToCompare.startTime) <= 0
+                && earliestStartTime.plusMinutes(tr.duration).compareTo(earliestStartTime) > 0) {
+                return new Class(currDate, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
+            } else {
+                return null;
+            }
+        }
+
+        // by assertion: currDate.compareTo(classToCompare.date) <= 0, currDate must be before the classToCompare.date
+
+        // check on whether possible to have a class on currDate
+        if (currTime.compareTo(tr.startTimeRange) < 0) {
+            return new Class(currDate, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+        } else if (currTime.compareTo(tr.endTimeRange) < 0) {
+            if (currTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0
+                && currTime.plusMinutes(tr.duration).compareTo(currTime) > 0) {
+                return new Class(currDate, currTime, currTime.plusMinutes(tr.duration));
+            }
+        }
+
+        assert currDate.plusDays(1).compareTo(classToCompare.date) <= 0;
+        // check on whether possible to have a class on next day of currDate
+        if (currDate.plusDays(1).compareTo(classToCompare.date) < 0) {
+            // currDate + 1 day is still before the given class date
+            return new Class(currDate.plusDays(1),
+                    tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+        } else {
+            // by assertion: currDate.plusDays(1).compareTo(classToCompare.date) <= 0
+            // currDate.plusDays(1).compareTo(classToCompare.date) == 0 in this part
+            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(classToCompare.startTime) <= 0
+                && tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.startTimeRange) > 0) {
+                return new Class(currDate.plusDays(1),
+                        tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+            } else {
+                return null;
+            }
+        }
+    }
+
+    protected static Class findSlotBetweenClasses(TimeRange tr, Student student1, Student student2) {
+        Class c1 = student1.getAClass();
+        Class c2 = student2.getAClass();
+        assert c1.date.compareTo(c2.date) <= 0;
+
+        // used for same-day-check and after-c1-slot-check
+        LocalTime earliestStartTime;
+        if (c1.endTime.compareTo(tr.startTimeRange) < 0) {
+            earliestStartTime = tr.startTimeRange;
+        } else {
+            earliestStartTime = c1.endTime;
+        }
+
+        if (c1.date.compareTo(c2.date) == 0) {
+            // if c1 and c2 on same day, simply check gap between
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(c2.startTime) <= 0
+                && earliestStartTime.plusMinutes(tr.duration).compareTo(earliestStartTime) > 0) {
+                return new Class(c1.date, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
+            }
+        } else {
+            // check slot after c1
+            if (earliestStartTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0
+                && earliestStartTime.plusMinutes(tr.duration).compareTo(earliestStartTime) > 0) {
+                return new Class(c1.date, earliestStartTime, earliestStartTime.plusMinutes(tr.duration));
+            }
+            // check whether there is gap in days between c1 and c2
+            if (c1.date.plusDays(1).compareTo(c2.date) < 0) {
+                return new Class(
+                        c1.date.plusDays(1), tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+            }
+            // check slot before c2
+            if (tr.startTimeRange.plusMinutes(tr.duration).compareTo(c2.startTime) <= 0
+                && tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.startTimeRange) > 0) {
+                return new Class(c2.date, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+            }
+        }
+        return null;
+    }
+
+    protected static Class findSlotAfterClass(TimeRange tr, Student student) {
+        Class classToCompare = student.getAClass();
+        if (classToCompare.endTime.compareTo(tr.startTimeRange) < 0
+            && tr.startTimeRange.plusMinutes(tr.duration).compareTo(tr.startTimeRange) > 0) {
+            return new Class(classToCompare.date, tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+        } else if (classToCompare.endTime.plusMinutes(tr.duration).compareTo(tr.endTimeRange) <= 0
+            && classToCompare.endTime.plusMinutes(tr.duration).compareTo(classToCompare.endTime) > 0) {
+            return new Class(
+                    classToCompare.date, classToCompare.endTime, classToCompare.endTime.plusMinutes(tr.duration));
+        } else {
+            return new Class(classToCompare.date.plusDays(1),
+                    tr.startTimeRange, tr.startTimeRange.plusMinutes(tr.duration));
+        }
     }
 
     @Override

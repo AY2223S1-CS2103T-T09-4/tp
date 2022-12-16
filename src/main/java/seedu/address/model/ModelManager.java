@@ -14,7 +14,9 @@ import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.model.student.Class;
 import seedu.address.model.student.Student;
+import seedu.address.model.timerange.TimeRange;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -118,6 +120,11 @@ public class ModelManager implements Model {
         teachersPet.setStudent(target, editedStudent);
     }
 
+    @Override
+    public Class findAvailableClassSlot(TimeRange timeRange) {
+        requireNonNull(timeRange);
+        return teachersPet.findAvailableClassSlot(timeRange);
+    }
     @Override
     public void sortStudents(Comparator<Student> comparator) {
         requireNonNull(comparator);

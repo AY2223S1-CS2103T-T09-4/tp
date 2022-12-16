@@ -21,7 +21,9 @@ import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyTeachersPet;
 import seedu.address.model.ReadOnlyUserPrefs;
 import seedu.address.model.TeachersPet;
+import seedu.address.model.student.Class;
 import seedu.address.model.student.Student;
+import seedu.address.model.timerange.TimeRange;
 import seedu.address.testutil.StudentBuilder;
 
 public class AddCommandTest {
@@ -140,6 +142,11 @@ public class AddCommandTest {
 
         @Override
         public void setStudent(Student target, Student editedStudent) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public Class findAvailableClassSlot(TimeRange timeRange) {
             throw new AssertionError("This method should not be called.");
         }
 
