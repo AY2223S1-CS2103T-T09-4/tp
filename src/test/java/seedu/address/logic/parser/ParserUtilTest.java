@@ -37,8 +37,7 @@ public class ParserUtilTest {
     private static final String INVALID_NOK_PHONE = "+659999";
     private static final String INVALID_ADDRESS = " ";
     private static final String INVALID_EMAIL = "example.com";
-    private static final Integer INVALID_MONEY_OWED = -1;
-    private static final Integer INVALID_MONEY_PAID = -1;
+    private static final Integer INVALID_MONEY = -1;
     private static final String INVALID_DATE_MISSING_DASHES = "2022 10 30";
     private static final String INVALID_CLASS_DATE_TIME = "2022 05 10 1500-1600";
     private static final String INVALID_EMPTY_CLASS_DATE_TIME = "";
@@ -53,8 +52,7 @@ public class ParserUtilTest {
     private static final String VALID_NOK_PHONE = "99999999";
     private static final String VALID_ADDRESS = "123 Main Street #0505";
     private static final String VALID_EMAIL = "rachel@example.com";
-    private static final Integer VALID_MONEY_OWED = 10;
-    private static final Integer VALID_MONEY_PAID = 100;
+    private static final Integer VALID_MONEY = 10;
     private static final String VALID_CLASS_DATE_TIME = "2022-05-10 1500-1600";
     private static final String VALID_DATE = "2022-05-10";
     private static final String VALID_FLEXIBLE_CLASS_DATE_TIME = "Sun 1500-1600";
@@ -63,6 +61,23 @@ public class ParserUtilTest {
     private static final String VALID_TAG_2 = "javaScript";
 
     private static final String WHITESPACE = " \t\r\n";
+
+    @Test
+    public void adjustDateToTomorrowSuccessful() {
+        // This date falls on a saturday
+        LocalDate date = LocalDate.of(2022, 10, 15);
+        ParserUtil.setTargetDayOfWeek(7);
+        LocalDate expectedDate = LocalDate.of(2022, 10, 16);
+        assertEquals(date.with(ParserUtil.DATE_ADJUSTER), expectedDate);
+    }
+
+    @Test
+    public void adjustDateToNextMondaySuccessful() {
+        LocalDate date = LocalDate.of(2022, 10, 15);
+        ParserUtil.setTargetDayOfWeek(1);
+        LocalDate expectedDate = LocalDate.of(2022, 10, 17);
+        assertEquals(date.with(ParserUtil.DATE_ADJUSTER), expectedDate);
+    }
 
     @Test
     public void parseIndex_invalidInput_throwsParseException() {
@@ -162,29 +177,6 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseNokPhone_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parsePhone((String) null));
-    }
-
-    @Test
-    public void parseNokPhone_invalidValue_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parsePhone(INVALID_NOK_PHONE));
-    }
-
-    @Test
-    public void parseNokPhone_validValueWithoutWhitespace_returnsNokPhone() throws Exception {
-        Phone expectedNokPhone = new Phone(VALID_NOK_PHONE);
-        assertEquals(expectedNokPhone, ParserUtil.parsePhone(VALID_NOK_PHONE));
-    }
-
-    @Test
-    public void parseNokPhone_validValueWithWhitespace_returnsTrimmedNokPhone() throws Exception {
-        String nokPhoneWithWhitespace = WHITESPACE + VALID_NOK_PHONE + WHITESPACE;
-        Phone expectedNokPhone = new Phone(VALID_NOK_PHONE);
-        assertEquals(expectedNokPhone, ParserUtil.parsePhone(nokPhoneWithWhitespace));
-    }
-
-    @Test
     public void parseAddress_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ParserUtil.parseAddress((String) null));
     }
@@ -231,48 +223,10 @@ public class ParserUtilTest {
     }
 
     @Test
-    public void parseMoneyOwed_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseMoney((String) null));
-    }
-
-    @Test
-    public void parseMoneyOwed_invalidValue_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parseMoney(INVALID_MONEY_OWED.toString()));
-    }
-
-    @Test
-    public void parseMoneyOwed_validValue_returnsMoneyOwed() throws Exception {
-        Money expectedMoneyOwed = new Money(VALID_MONEY_OWED);
-        assertEquals(expectedMoneyOwed, ParserUtil.parseMoney(VALID_MONEY_OWED.toString()));
-    }
-
-    @Test
-    public void parseMoneyPaid_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> ParserUtil.parseMoney((String) null));
-    }
-
-    @Test
-    public void parseMoneyPaid_invalidValue_throwsParseException() {
-        assertThrows(ParseException.class, () -> ParserUtil.parseMoney(INVALID_MONEY_PAID.toString()));
-    }
-
-    @Test
-    public void parseMoneyPaid_validValue_returnsMoneyOwed() throws Exception {
-        Money expectedMoneyPaid = new Money(VALID_MONEY_PAID);
-        assertEquals(expectedMoneyPaid, ParserUtil.parseMoney(VALID_MONEY_PAID.toString()));
-    }
-
-    @Test
     public void parseClassDateTime_validDateTime_returnsClass() throws Exception {
         Class expectedClass = new Class(LocalDate.of(2022, 5, 10),
                 LocalTime.of(15, 0), LocalTime.of(16, 0), VALID_CLASS_DATE_TIME);
         assertEquals(expectedClass, ParserUtil.parseClass(VALID_CLASS_DATE_TIME));
-    }
-
-    @Test
-    public void parseDateToFind_validDate_returnsDate() throws Exception {
-        LocalDate expectedDate = LocalDate.of(2022, 5, 10);
-        assertEquals(expectedDate, ParserUtil.parseDateToFind(VALID_DATE));
     }
 
     @Test
@@ -289,6 +243,12 @@ public class ParserUtilTest {
         assertThrows(ParseException.class, () -> ParserUtil.parseClass(INVALID_FLEXIBLE_CLASS_TIME));
         assertThrows(ParseException.class, () -> ParserUtil.parseClass(INVALID_FLEXIBLE_CLASS_DATE_TIME_DURATION));
         assertThrows(ParseException.class, () -> ParserUtil.parseClass(""));
+    }
+
+    @Test
+    public void parseDateToFind_validDate_returnsDate() throws Exception {
+        LocalDate expectedDate = LocalDate.of(2022, 5, 10);
+        assertEquals(expectedDate, ParserUtil.parseDateToFind(VALID_DATE));
     }
 
     @Test
@@ -378,6 +338,22 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseMoney_null_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> ParserUtil.parseMoney((String) null));
+    }
+
+    @Test
+    public void parseMoney_invalidValue_throwsParseException() {
+        assertThrows(ParseException.class, () -> ParserUtil.parseMoney(INVALID_MONEY.toString()));
+    }
+
+    @Test
+    public void parseMoney_validValue_returnsMoneyOwed() throws Exception {
+        Money expectedMoney = new Money(VALID_MONEY);
+        assertEquals(expectedMoney, ParserUtil.parseMoney(VALID_MONEY.toString()));
+    }
+
+    @Test
     public void parseTag_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ParserUtil.parseTag(null));
     }
@@ -444,22 +420,5 @@ public class ParserUtilTest {
         List<String> expectedTagSet = Arrays.asList(VALID_TAG_1, VALID_TAG_2);
 
         assertEquals(expectedTagSet, actualTagSet);
-    }
-
-    @Test
-    public void adjustDateToTomorrowSuccessful() {
-        // This date falls on a saturday
-        LocalDate date = LocalDate.of(2022, 10, 15);
-        ParserUtil.setTargetDayOfWeek(7);
-        LocalDate expectedDate = LocalDate.of(2022, 10, 16);
-        assertEquals(date.with(ParserUtil.DATE_ADJUSTER), expectedDate);
-    }
-
-    @Test
-    public void adjustDateToNextMondaySuccessful() {
-        LocalDate date = LocalDate.of(2022, 10, 15);
-        ParserUtil.setTargetDayOfWeek(1);
-        LocalDate expectedDate = LocalDate.of(2022, 10, 17);
-        assertEquals(date.with(ParserUtil.DATE_ADJUSTER), expectedDate);
     }
 }
