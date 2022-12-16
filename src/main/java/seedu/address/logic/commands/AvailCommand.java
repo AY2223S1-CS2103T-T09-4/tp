@@ -6,6 +6,9 @@ import seedu.address.model.Model;
 import seedu.address.model.student.Class;
 import seedu.address.model.timerange.TimeRange;
 
+/**
+ * Finds the next available class schedule
+ */
 public class AvailCommand extends Command {
 
     public static final String COMMAND_WORD = "avail";

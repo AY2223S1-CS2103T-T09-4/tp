@@ -5,13 +5,13 @@ import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailur
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.time.LocalTime;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AvailCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.timerange.TimeRange;
-
-import java.time.LocalTime;
 
 public class AvailCommandParserTest {
     private AvailCommandParser parser = new AvailCommandParser();
@@ -28,7 +28,7 @@ public class AvailCommandParserTest {
     public void parse_invalidArgs_throwsParseException() {
         assertParseFailure(parser, " UNKNOWN",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, AvailCommand.MESSAGE_USAGE));
-        assertThrows(ParseException.class, String.format(MESSAGE_INVALID_COMMAND_FORMAT, AvailCommand.MESSAGE_USAGE),
-                () -> parser.parse(AvailCommand.COMMAND_WORD + " UNKNOWN"));
+        assertThrows(ParseException.class, String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                        AvailCommand.MESSAGE_USAGE), () -> parser.parse(AvailCommand.COMMAND_WORD + " UNKNOWN"));
     }
 }

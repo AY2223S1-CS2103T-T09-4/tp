@@ -292,6 +292,12 @@ public class ParserUtil {
         return result;
     }
 
+    /**
+     * Parses a {@code String timeRangeString} into a {@code TimeRange}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code timeRangeString} is invalid.
+     */
     public static TimeRange parseTimeRange(String timeRangeString) throws ParseException {
         requireNonNull(timeRangeString);
         String trimmedTimeRange = timeRangeString.trim();
