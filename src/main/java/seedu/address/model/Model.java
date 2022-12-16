@@ -84,7 +84,7 @@ public interface Model {
      * Returns the first available class within the range specified by {@code TimeRange}
      * @return the first available {@code Class}
      */
-    Class findAvailableClass(TimeRange timeRange);
+    Class findAvailableClassSlot(TimeRange timeRange);
 
     /**
      * Sorts the current filtered student list with the given {@code comparator}.

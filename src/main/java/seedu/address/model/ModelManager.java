@@ -121,10 +121,9 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public Class findAvailableClass(TimeRange timeRange) {
+    public Class findAvailableClassSlot(TimeRange timeRange) {
         requireNonNull(timeRange);
-        // TODO: implement details
-        return new Class();
+        return teachersPet.findAvailableClassSlot(timeRange);
     }
     @Override
     public void sortStudents(Comparator<Student> comparator) {

@@ -6,9 +6,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import javafx.collections.ObservableList;
+import seedu.address.model.student.Class;
 import seedu.address.model.student.Student;
 import seedu.address.model.student.UniqueScheduleList;
 import seedu.address.model.student.UniqueStudentList;
+import seedu.address.model.timerange.TimeRange;
 
 /**
  * Wraps all data at the address-book level
@@ -107,6 +109,14 @@ public class TeachersPet implements ReadOnlyTeachersPet {
     public void removeStudent(Student key) {
         students.remove(key);
         schedule.remove(key);
+    }
+
+    /**
+     * Returns the first available class from {@code TeachersPet} within the time range.
+     * @return the first available class.
+     */
+    public Class findAvailableClassSlot(TimeRange timeRange) {
+        return students.findAvailableClassSlot(timeRange);
     }
 
     //// util methods

@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import seedu.address.model.student.exceptions.DuplicateStudentException;
 import seedu.address.model.student.exceptions.StudentNotFoundException;
+import seedu.address.model.timerange.TimeRange;
 
 /**
  * A list of students that enforces uniqueness between its elements and does not allow nulls.
@@ -136,6 +137,10 @@ public class UniqueStudentList implements Iterable<Student> {
     @Override
     public Iterator<Student> iterator() {
         return internalList.iterator();
+    }
+
+    public Class findAvailableClassSlot(TimeRange timeRange) {
+        return new Class();
     }
 
     @Override

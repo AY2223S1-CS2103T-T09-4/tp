@@ -31,7 +31,7 @@ public class AvailCommand extends Command {
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
-        Class classToDisplay = model.findAvailableClass(timeRange);
+        Class classToDisplay = model.findAvailableClassSlot(timeRange);
 
         return new CommandResult(String.format(MESSAGE_SUCCESS, classToDisplay.toAvailCommandString()));
     }

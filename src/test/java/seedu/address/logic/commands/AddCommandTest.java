@@ -146,7 +146,7 @@ public class AddCommandTest {
         }
 
         @Override
-        public Class findAvailableClass(TimeRange timeRange) {
+        public Class findAvailableClassSlot(TimeRange timeRange) {
             throw new AssertionError("This method should not be called.");
         }
 
